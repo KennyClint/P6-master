@@ -16,14 +16,14 @@ exports.signup = function(req, res, next)
 		.then(function()
 		{
 			res.status(201).json({message : "Utilisateur créé"})
-		}
+		})
 		.catch(function(error)
 		{
 			res.status(400).json({error});
-		};
-	}
-		.catch(function(error)
-		{
-			res.status(500).json({error});
 		});
-	};
+	})
+	.catch(function(error)
+	{
+		res.status(500).json({error});
+	});
+};
