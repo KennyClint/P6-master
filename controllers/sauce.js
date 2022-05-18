@@ -41,3 +41,24 @@ exports.getOneSauce = function(req, res, next)
 		res.status(404).json({error : error});
 	});
 };
+
+exports.modifySauce = function(req, res, next)
+{
+	const sauce = new Sauce({
+		_id : req.params.id,
+		userId : req.body.userId,
+		name : req.body.name,
+		manufacturer : req.body.manufacturer,
+		description : req.body.description,
+		mainPepper : req.body.mainPepper,
+		imageUrl : req.body.imageUrl,
+		heat : req.body.heat
+	});
+	Sauce.updateOne({_id : req.params.id}, sauce)
+	.then(function(){
+		res.status(201).json({message : "Sauce updated successfully"});
+	})
+	.catch(function(error){
+		res.status(400).json({error : error});
+	});
+};
