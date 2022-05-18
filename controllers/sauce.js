@@ -65,16 +65,31 @@ exports.modifySauce = function(req, res, next)
 
 exports.deleteSauce = function(req, res, next)
 {
-	Sauce.deleteOne({_id : req.params.id})
-	.then(function(){
-		res.status(200).json({message : "Deleted"});
+	Sauce.findOne({_id : req.params.id})
+	.then(function(sauce){
+		if(!sauce)
+		{
+			res.status(404).json({error : new Error("No such sauce")});
+		} else 
+		{
+			if(sauce.userId !== req.auth.userId)
+			{
+				res.status(400).json({error : new Error("Unauthorized request")});
+			} else
+			{
+				Sauce.deleteOne({_id : req.params.id})
+				.then(function(){
+					res.status(200).json({message : "Deleted"});
+				})
+				.catch(function(error){
+					res.status(400).json({error : error});
+				});
+			}
+		}
 	})
-	.catch(function(error){
-		res.status(400).json({error : error});
-	});
 };
 
 exports.likeSauce = function(req, res, next)
 {
-	
+
 };
