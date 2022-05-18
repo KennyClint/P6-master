@@ -73,3 +73,8 @@ exports.deleteSauce = function(req, res, next)
 		res.status(400).json({error : error});
 	});
 };
+
+exports.likeSauce = function(req, res, next)
+{
+	
+};
