@@ -62,3 +62,14 @@ exports.modifySauce = function(req, res, next)
 		res.status(400).json({error : error});
 	});
 };
+
+exports.deleteSauce = function(req, res, next)
+{
+	Sauce.deleteOne({_id : req.params.id})
+	.then(function(){
+		res.status(200).json({message : "Deleted"});
+	})
+	.catch(function(error){
+		res.status(400).json({error : error});
+	});
+};
