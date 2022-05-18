@@ -10,6 +10,8 @@ mongoose.connect(process.env.BDD_URL,
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
+app.use(express.json());
+
 app.use(function(req, res, next) 
 {
   res.setHeader('Access-Control-Allow-Origin', '*');
