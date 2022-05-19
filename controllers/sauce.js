@@ -1,4 +1,5 @@
 const Sauce = require("../models/Sauce");
+const fs = require("fs");
 
 exports.getAllSauce = function(req, res, next)
 {
@@ -43,8 +44,8 @@ exports.modifySauce = function(req, res, next)
 {
 	const sauceObject = req.file ?
 	{
-	...JSON.parse(req.body.sauce),	
-	imageUrl : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+		...JSON.parse(req.body.sauce),	
+		imageUrl : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
 	} : {req.body};
 	Sauce.updateOne({_id : req.params.id}, {...sauceObject, _id : req.params.id})
 	.then(function(){
@@ -69,12 +70,21 @@ exports.deleteSauce = function(req, res, next)
 				res.status(400).json({error : new Error("Unauthorized request")});
 			} else
 			{
-				Sauce.deleteOne({_id : req.params.id})
-				.then(function(){
-					res.status(200).json({message : "Deleted"});
+				Sauce.findOne({_id : req.params.id})
+				.then(function(sauce){
+					const filename = sauce.imageUrl.split("/images/")[1];
+					fs.unlink(`images/${filename}`,function(){
+						Sauce.deleteOne({_id : req.params.id})
+						.then(function(){
+							res.status(200).json({message : "Deleted"});
+						})
+						.catch(function(error){
+							res.status(400).json({error : error});
+						});
+					});
 				})
 				.catch(function(error){
-					res.status(400).json({error : error});
+					res.status(500).json({error});
 				});
 			}
 		}
