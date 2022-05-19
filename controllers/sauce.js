@@ -13,14 +13,11 @@ exports.getAllSauce = function(req, res, next)
 
 exports.createSauce = function(req, res, next)
 {
+	const sauceObject = JSON.parse(req.body.sauce);
+	delete sauceObject._id;
 	const sauce = new Sauce ({
-		userId : req.body.userId,
-		name : req.body.name,
-		manufacturer : req.body.manufacturer,
-		description : req.body.description,
-		mainPepper : req.body.mainPepper,
-		imageUrl : req.body.imageUrl,
-		heat : req.body.heat	
+		...sauceObject,
+		imageUrl : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`	
 	});
 	sauce.save()
 	.then(function(){
