@@ -41,22 +41,17 @@ exports.getOneSauce = function(req, res, next)
 
 exports.modifySauce = function(req, res, next)
 {
-	const sauce = new Sauce({
-		_id : req.params.id,
-		userId : req.body.userId,
-		name : req.body.name,
-		manufacturer : req.body.manufacturer,
-		description : req.body.description,
-		mainPepper : req.body.mainPepper,
-		imageUrl : req.body.imageUrl,
-		heat : req.body.heat
-	});
-	Sauce.updateOne({_id : req.params.id}, sauce)
+	const sauceObject = req.file ?
+	{
+	...JSON.parse(req.body.sauce),	
+	imageUrl : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+	} : {req.body};
+	Sauce.updateOne({_id : req.params.id}, {...sauceObject, _id : req.params.id})
 	.then(function(){
-		res.status(201).json({message : "Sauce updated successfully"});
+		res.status(200).json({message : "Sauce updated successfully"});
 	})
 	.catch(function(error){
-		res.status(400).json({error : error});
+		res.status(400).json({error});
 	});
 };
 
