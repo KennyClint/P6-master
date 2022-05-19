@@ -47,8 +47,22 @@ exports.modifySauce = function(req, res, next)
 	const sauceObject = req.file ?
 	{
 		...JSON.parse(req.body.sauce),	
-		imageUrl : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+		imageUrl : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`	
 	} : {...req.body};
+	if(req.file)
+	{
+		Sauce.findOne({_id : req.params.id})
+		.then(function(sauce){
+			const filename = sauce.imageUrl.split("/images/")[1];
+			fs.unlink(`images/${filename}`, function(error){
+				if(error){console.log(error)}
+					else {console.log("Old file delete")};
+			});
+		})
+		.catch(function(error){
+			res.status(500).json({error});
+		});
+	};
 	Sauce.updateOne({_id : req.params.id}, {...sauceObject, _id : req.params.id})
 	.then(function(){
 		res.status(200).json({message : "Sauce updated successfully"});
