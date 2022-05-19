@@ -109,5 +109,46 @@ exports.deleteSauce = function(req, res, next)
 
 exports.likeSauce = function(req, res, next)
 {
+	Sauce.findOne({_id : req.params.id})
+	.then(function(sauce){
+		const like = req.body.like;
+		const userId = req.body.userId;
+		switch(like)
+		{
+			case 1 :
+			let counter = 0;
+			for (let i of sauce.usersLiked)
+			{
+				if(i !== userId)
+				{
+					counter++;
+				} else 
+				{
 
+				};
+			};
+			if(counter === sauce.usersLiked.length)
+			{
+				
+			}
+
+			
+
+			
+			break;
+			case -1 :
+			//fonction.........
+
+			break;
+			case 0 :
+			//fonction.........
+
+			break;
+			default :
+			res.status(500).json({new Error : "Valeur variable like inconnue"});
+		};	
+	})
+	.catch(function(error){
+		res.status(500).json({error});
+	});
 };
