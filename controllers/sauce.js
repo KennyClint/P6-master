@@ -46,7 +46,7 @@ exports.modifySauce = function(req, res, next)
 	{
 		...JSON.parse(req.body.sauce),	
 		imageUrl : `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-	} : {req.body};
+	} : {...req.body};
 	Sauce.updateOne({_id : req.params.id}, {...sauceObject, _id : req.params.id})
 	.then(function(){
 		res.status(200).json({message : "Sauce updated successfully"});
