@@ -113,40 +113,130 @@ exports.likeSauce = function(req, res, next)
 	.then(function(sauce){
 		const like = req.body.like;
 		const userId = req.body.userId;
-		switch(like)
+		const usersLikedArray = sauce.usersLiked;
+		const usersDislikedArray = sauce.usersDisliked;
+		switchLikeSauce :
 		{
-			case 1 :
-			let counter = 0;
-			for (let i of sauce.usersLiked)
+			switch(like)
 			{
-				if(i !== userId)
+				case 1 :
+				let counterLike = 0;
+				for (let i of usersLikedArray)
 				{
-					counter++;
-				} else 
-				{
-
+					if(i !== userId)
+					{
+						counterLike++;
+					} else 
+					{
+						break;
+					};
 				};
+				if(counterLike === usersLikedArray.length)
+				{
+					usersLikedArray.push(userId);
+					Sauce.updateOne({_id : req.params.id}, {$set : {usersLiked : usersLikedArray, likes : usersLikedArray.length}})
+					.then(function(){
+						res.status(200).json({message : "Sauce liked"});
+					})
+					.catch(function(error){
+						res.status(400).json({error});
+					});
+					for (let i in usersDislikedArray)
+					{
+						if(usersDislikedArray[i] === userId)
+						{
+							usersDislikedArray.splice(i, 1);
+							Sauce.updateOne({_id : req.params.id}, {$set : {usersDisliked : usersDislikedArray, dislikes : usersDislikedArray.length}})
+							.then(function(){
+								res.status(200).json({message : "Dislike user delete"});
+							})
+							.catch(function(error){
+								res.status(400).json({error});
+							});
+							break;
+						};
+					};
+				};
+
+				break;
+				case -1 :
+				let counterDislike = 0;
+				for (let i of usersDislikedArray)
+				{
+					if(i !== userId)
+					{
+						counterDislike++;
+					} else 
+					{
+						break;
+					};
+				};
+				if(counterDislike === usersDislikedArray.length)
+				{
+					usersDislikedArray.push(userId);
+					Sauce.updateOne({_id : req.params.id}, {$set : {usersDisliked : usersDislikedArray, dislikes : usersDislikedArray.length}})
+					.then(function(){
+						res.status(200).json({message : "Sauce disliked"});
+					})
+					.catch(function(error){
+						res.status(400).json({error});
+					});
+					for (let i in usersLikedArray)
+					{
+						if(usersLikedArray[i] === userId)
+						{
+							usersLikedArray.splice(i, 1);
+							Sauce.updateOne({_id : req.params.id}, {$set : {usersLiked : usersLikedArray, likes : usersLikedArray.length}})
+							.then(function(){
+								res.status(200).json({message : "Like user delete"});
+							})
+							.catch(function(error){
+								res.status(400).json({error});
+							});
+							break;
+						};
+					};
+				};
+
+				break;
+				case 0 :
+				for (let i in usersLikedArray)
+				{
+					if(usersLikedArray[i] === userId)
+					{
+						usersLikedArray.splice(i, 1);
+						Sauce.updateOne({_id : req.params.id}, {$set : {usersLiked : usersLikedArray, likes : usersLikedArray.length}})
+						.then(function(){
+							res.status(200).json({message : "Like user delete"});
+						})
+						.catch(function(error){
+							res.status(400).json({error});
+						});
+						break switchLikeSauce;
+					};
+				};
+				for (let i in usersDislikedArray)
+				{
+					if(usersDislikedArray[i] === userId)
+					{
+						usersDislikedArray.splice(i, 1);
+						Sauce.updateOne({_id : req.params.id}, {$set : {usersDisliked : usersDislikedArray, dislikes : usersDislikedArray.length}})
+						.then(function(){
+							res.status(200).json({message : "Dislike user delete"});
+						})
+						.catch(function(error){
+							res.status(400).json({error});
+						});
+						break;
+					};
+				};
+
+				break;
+				default :
+				res.status(500).json({error : "Valeur variable like requête inconnue"});
 			};
-			if(counter === sauce.usersLiked.length)
-			{
-				
-			}
+		};
 
-			
-
-			
-			break;
-			case -1 :
-			//fonction.........
-
-			break;
-			case 0 :
-			//fonction.........
-
-			break;
-			default :
-			res.status(500).json({new Error : "Valeur variable like inconnue"});
-		};	
 	})
 	.catch(function(error){
 		res.status(500).json({error});
