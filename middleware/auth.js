@@ -17,8 +17,8 @@ module.exports = function(req, res, next)
 		} 
 	} catch 
 	{
-		res.status(401).json({
-			error : new Error("Invalid request")
+		res.status(403).json({
+			error : new Error("403: unauthorized request.")
 		});
 	}
 };
